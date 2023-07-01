@@ -1,6 +1,87 @@
-import Image from 'next/image'
+'use client'
+
+import { useState } from 'react'
+import RadioGroup from '@mui/material/RadioGroup';
+import { FormControl, FormControlLabel, FormLabel, List, ListItem, ListItemText, Radio } from '@mui/material';
+import database from './db'
 
 export default function Home() {
+
+  let [selectionSortData, setSelectionSortData] = useState('')
+  let [quickSortData, setQuickSortData] = useState('')
+  let [numerosAleatorios, setNumerosAleatorios] = useState([])
+  let [dados, setDados] = useState('numeros')
+
+
+  function organizarComQuickSort(numerosAleatorios) {
+    const organizado = organizarinternamente(numerosAleatorios)
+    
+    function organizarinternamente(arr) {
+      if (arr.length <= 1) {
+        return arr;
+      }
+
+      const pivo = arr[Math.floor(arr.length / 2)];
+      const menores = [];
+      const iguais = [];
+      const maiores = [];
+
+      for (let elemento of arr) {
+        if (elemento < pivo) {
+          menores.push(elemento);
+        } else if (elemento > pivo) {
+          maiores.push(elemento);
+        } else {
+          iguais.push(elemento);
+        }
+      }
+
+      return [...organizarinternamente(menores), ...iguais, ...organizarinternamente(maiores)]
+    }
+    
+    let numerosOrganizados = organizado.map((item, index)=>{
+      return <ListItemText key={index} primary={item} />
+    })
+
+    setQuickSortData(numerosOrganizados)
+    // return console.log(arrayFinal)
+  }
+
+  function organizarComSelectionSort() {
+
+  }
+
+  function gerarStringsAleatorias() {
+    let stringsDB = database.map((item, index) => {
+      return <ListItemText key={index} primary={item} />
+    })
+
+    setQuickSortData(stringsDB);
+    setSelectionSortData(stringsDB);
+  }
+
+  function gerarNumerosAleatorios(quantidade) {
+    let numeros = [];
+
+    for (let i = 0; i < quantidade; i++) {
+      numeros.push(Math.floor(Math.random() * 10000));
+    }
+    setNumerosAleatorios(numeros)
+
+    let numerosSoltos = numeros.map((item, index) => {
+      return <ListItemText key={index} primary={item} />
+    })
+    // console.log(numerosSoltos)
+
+    setQuickSortData(numerosSoltos);
+    setSelectionSortData(numerosSoltos);
+
+  }
+
+  const handleChange = (e) => {
+    setDados(e.target.value)
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center p-12 ">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm ">
@@ -11,11 +92,34 @@ export default function Home() {
           Organização de Estruturas utilizando QuickSort e SelectionSort
         </p>
       </div>
-      <div id='principal' className=' grid grid-cols-5 grid-rows-5 h-screen w-full p-6 gap-2 '>
+      <div id='principal' className=' grid grid-cols-5 grid-rows-6 h-screen w-full p-6 gap-2 '>
 
-        <div id='menu' className=' grid grid-cols-1 grid-rows-6 col-span-1 row-span-5 bg-slate-800 p-6 text-center'>
+        <div id='menu' className=' grid grid-cols-1 grid-rows-6 gap-1 col-span-1 row-span-5 bg-slate-800 p-6 text-center'>
           <div className=' col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-slate-900'>
             <p>Área do Menu</p>
+          </div>
+          <div className='col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2'>
+            <FormControl>
+              {/* <FormLabel id="demo-radio-buttons-group-label">Tipo de Entrada</FormLabel> */}
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue={'numeros'}
+                name="radio-buttons-group"
+                onChange={handleChange}
+                value={dados}
+              >
+                <FormControlLabel value="numeros" control={<Radio />} label="10.000 Strings" />
+                <FormControlLabel value="nomes" control={<Radio />} label="10.000 Números" />
+              </RadioGroup>
+            </FormControl>
+          </div>
+
+          <div onClick={() => !(dados == 'numeros') ? gerarNumerosAleatorios(10000) : gerarStringsAleatorias()} className=' row-start-4 cursor-pointer col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-red-500'>
+            <p>Gerar dados</p>
+          </div>
+
+          <div onClick={() => organizarComQuickSort(numerosAleatorios)} className=' row-start-6 cursor-pointer col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-green-500'>
+            <p>Organizar</p>
           </div>
         </div>
 
@@ -37,12 +141,21 @@ export default function Home() {
                 <p className=' text-3xl text-center items-center justify-center'>00:00</p>
               </div>
             </div>
-            
+
           </div>
 
-          <div className='col-span-2 row-span-5 p-6 bg-gray-700 mt-2'>
-            <p>Área da Organização</p>
+          <div className='grid grid-cols-1 grid-rows-1 col-span-1 row-span-5 p-6 bg-gray-700 mt-2'>
+            <div className='bg-black col-span-1 row-span-1 p-3 overflow-auto '>
+              {/* <p className=' text-green-400 flex-col '>{quickSortData}</p> */}
+              {quickSortData}
+            </div>
           </div>
+          <div className='grid grid-cols-1 grid-rows-1 col-span-1 row-span-5 p-6 bg-gray-700 mt-2'>
+            <div className='bg-black col-span-1 row-span-1 p-3 overflow-auto'>
+              <p className=' text-green-400 '>{selectionSortData}</p>
+            </div>
+          </div>
+
         </div>
       </div>
 
