@@ -13,8 +13,86 @@ export default function Home() {
   let [dados, setDados] = useState('numeros')
   let [tempoQS, setTempoQS] = useState('00:00')
   let [tempoSS, setTempoSS] = useState('00:00')
+  let [loading, setLoading] = useState(false)
+
+
+  function organizarStringsComQuickSort(database) {
+    setLoading(true)
+    let startTime = performance.now()
+    const organizado = organizarinternamente(database)
+
+    function organizarinternamente(arr) {
+      if (arr.length <= 1) {
+        return arr;
+      }
+
+      const pivo = arr[Math.floor(arr.length / 2)]
+      const menores = [];
+      const iguais = [];
+      const maiores = [];
+
+      for (let elemento of arr) {
+        const comparison = elemento.localeCompare(pivo);
+        if (comparison < 0) {
+          menores.push(elemento);
+        } else if (comparison > 0) {
+          maiores.push(elemento);
+        } else {
+          iguais.push(elemento);
+        }
+      }
+
+      return [...organizarinternamente(menores), ...iguais, ...organizarinternamente(maiores)]
+    }
+    let endTime = performance.now()
+
+    let numerosOrganizados = organizado.map((item, index) => {
+      return <ListItemText key={index} primary={item} />
+    })
+
+    setQuickSortData(numerosOrganizados)
+    setTempoQS((endTime - startTime).toFixed(2))
+  }
+
+  function organizarStringsComSelectionSort(database) {
+    let startTime = performance.now()
+    // console.log(numerosAleatorios)
+    let organizado = selectionSort(database)
+
+    function selectionSort(arr) {
+      const len = arr.length;
+
+      for (let i = 0; i < len - 1; i++) {
+        let minIndex = i;
+
+        for (let j = i + 1; j < len; j++) {
+          if (arr[j] < arr[minIndex]) {
+            minIndex = j;
+          }
+        }
+
+        if (minIndex !== i) {
+          // Troca os elementos de posição
+          [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+        }
+      }
+
+      return arr
+    }
+    let endTime = performance.now()
+
+    // console.log(organizado)
+    let numerosOrganizados = organizado.map((item, index) => {
+      return <ListItemText key={index} primary={item} />
+    })
+
+    setSelectionSortData(numerosOrganizados)
+    setTempoSS((endTime - startTime).toFixed(2))
+    setLoading(false)
+  }
 
   function organizarComQuickSort(numerosAleatorios) {
+    setLoading(true)
     // console.log(dados)
     let startTime = performance.now()
     const organizado = organizarinternamente(numerosAleatorios)
@@ -49,8 +127,6 @@ export default function Home() {
 
     setQuickSortData(numerosOrganizados)
     setTempoQS((endTime - startTime).toFixed(2))
-
-    // organizarComSelectionSort(numerosAleatorios)
   }
 
   function organizarComSelectionSort(numerosAleatorios) {
@@ -87,18 +163,22 @@ export default function Home() {
 
     setSelectionSortData(numerosOrganizados)
     setTempoSS((endTime - startTime).toFixed(2))
+    setLoading(false)
   }
 
   function gerarStringsAleatorias() {
+    setLoading(true)
     let stringsDB = database.map((item, index) => {
       return <ListItemText key={index} primary={item} />
     })
 
     setQuickSortData(stringsDB);
     setSelectionSortData(stringsDB);
+    setLoading(false)
   }
 
   function gerarNumerosAleatorios(quantidade) {
+    setLoading(true)
     let numeros = [];
 
     for (let i = 0; i < quantidade; i++) {
@@ -113,7 +193,7 @@ export default function Home() {
 
     setQuickSortData(numerosSoltos);
     setSelectionSortData(numerosSoltos);
-
+    setLoading(false)
   }
 
   const handleChange = (e) => {
@@ -146,22 +226,31 @@ export default function Home() {
                 onChange={handleChange}
                 value={dados}
               >
-                <FormControlLabel value="numeros" control={<Radio />} label="1000 Strings" />
-                <FormControlLabel value="nomes" control={<Radio />} label="10.000 Números" />
+                <FormControlLabel value="numeros" control={<Radio />} label="10.000 Números" />
+                <FormControlLabel value="nomes" control={<Radio />} label="1000 Strings" />
               </RadioGroup>
             </FormControl>
           </div>
 
-          <div onClick={() => !(dados == 'numeros') ? gerarNumerosAleatorios(10000) : gerarStringsAleatorias()} className=' row-start-4 cursor-pointer col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-red-500 hover:bg-red-700'>
+          <div onClick={() => (dados == 'numeros') ? gerarNumerosAleatorios(10000) : gerarStringsAleatorias()} className=' row-start-4 cursor-pointer col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-red-500 hover:bg-red-700'>
             <p>Gerar dados</p>
           </div>
 
-          <div onClick={() => {
+          {dados == 'numeros' ? <div onClick={() => {
+            setLoading(true)
             organizarComQuickSort(numerosAleatorios)
             organizarComSelectionSort(numerosAleatorios)
           }} className=' row-start-6 cursor-pointer col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-green-500 hover:bg-green-700'>
-            <p>Organizar</p>
-          </div>
+            <p>Organizar Números</p>
+          </div> :
+            <div onClick={() => {
+              setLoading(true)
+              organizarStringsComQuickSort(database)
+              organizarStringsComSelectionSort(database)
+            }} className=' row-start-6 cursor-pointer col-span-1 row-span-1 text-center uppercase flex flex-col justify-center p-2 bg-green-500 hover:bg-green-700'>
+              <p>Organizar Strings</p>
+            </div>
+          }
         </div>
 
         <div className='col-span-4 row-span-5 grid grid-cols-2 grid-rows-6 bg-slate-900 '>
@@ -172,14 +261,14 @@ export default function Home() {
               <div className=' flex flex-col justify-between bg-gray-700 p-2'>
                 <p className=' text-4xl text-center'>QuickSort</p>
                 <a className=' font-bold uppercase bg-red-400 rounded-sm mx-5 ' >Tempo de execução:</a>
-                <p className=' text-3xl text-center items-center justify-center'>{tempoQS} <span className=' text-green-500 '>ms </span> ou  {tempoQS == '00:00' ? '00' : (tempoQS / 10).toFixed(2)} <span className=' text-green-500 '>segundos </span></p>
+                <p className=' text-3xl text-center items-center justify-center'>{tempoQS} <span className=' text-green-500 '>ms </span> </p>
               </div>
             </div>
             <div className=' grid grid-cols-1 grid-rows-1 col-span-1 row-span-1 text-center'>
               <div className='  flex flex-col justify-between bg-gray-700 p-2 '>
                 <p className=' text-4xl text-center'>SelectionSort</p>
                 <a className=' font-bold uppercase bg-red-400 rounded-sm mx-5 ' >Tempo de execução:</a>
-                <p className=' text-3xl text-center items-center justify-center'>{tempoSS} <span className=' text-green-500 '>ms </span> ou {tempoSS == '00:00' ? '00' : (tempoSS / 10).toFixed(2)} <span className=' text-green-500 '>segundos </span></p>
+                <p className=' text-3xl text-center items-center justify-center'>{tempoSS} <span className=' text-green-500 '>ms </span></p>
               </div>
             </div>
 
@@ -199,7 +288,9 @@ export default function Home() {
 
         </div>
       </div>
-
-    </main>
+      <div>
+        Desenvolvido por <span className=' text-yellow-300 ' > <a href='https://github.com/alan-cavalcante' target='_blank'> Alan Cavalcante</a></span> e <span className=' text-green-300' > <a href='#' > Wendel Simões</a></span>
+      </div>
+    </main >
   )
 }
