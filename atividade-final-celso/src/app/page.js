@@ -209,6 +209,9 @@ export default function Home() {
         <p className="left-0 top-0 flex w-full text-center justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 text-yellow-300">
           Organização de Estruturas utilizando QuickSort e SelectionSort
         </p>
+        <p className=' justify-center items-center text-center '>
+          Desenvolvido por <span className=' text-yellow-300 ' > <a href='https://github.com/alan-cavalcante' target='_blank'> Alan Cavalcante</a></span> e <span className=' text-green-300' > <a href='https://github.com/wendel-simoes' target='_blank' > Wendel Simões</a></span>
+        </p>
       </div>
       <div id='principal' className=' grid grid-cols-5 grid-rows-6 h-screen w-full p-6 gap-2 '>
 
@@ -288,9 +291,7 @@ export default function Home() {
 
         </div>
       </div>
-      <div>
-        Desenvolvido por <span className=' text-yellow-300 ' > <a href='https://github.com/alan-cavalcante' target='_blank'> Alan Cavalcante</a></span> e <span className=' text-green-300' > <a href='#' > Wendel Simões</a></span>
-      </div>
+
     </main >
   )
 }
