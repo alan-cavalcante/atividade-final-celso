@@ -210,7 +210,7 @@ export default function Home() {
           Organização de Estruturas utilizando QuickSort e SelectionSort
         </p>
         <p className=' justify-center items-center text-center '>
-          Desenvolvido por <span className=' text-yellow-300 ' > <a href='https://github.com/alan-cavalcante' target='_blank'> Alan Cavalcante</a></span> e <span className=' text-green-300' > <a href='https://github.com/wendel-simoes' target='_blank' > Wendel Simões</a></span>
+          Desenvolvido por <span className=' text-yellow-300 ' > <a href='https://github.com/alan-cavalcante' target='_blank'> Alan Cavalcante</a></span>, <span className=' text-green-300' > <a href='https://github.com/wendel-simoes' target='_blank' > Wendel Simões</a></span>, <span className='text-red-300' >Solon Martinez Padilha</span>  e Lucas Batista Ferreira
         </p>
       </div>
       <div id='principal' className=' grid grid-cols-5 grid-rows-6 h-screen w-full p-6 gap-2 '>
